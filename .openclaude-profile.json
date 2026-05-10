@@ -1,0 +1,8 @@
+{
+  "profile": "anthropic",
+  "env": {
+    "ANTHROPIC_BASE_URL": "https://api.anthropic.com",
+    "ANTHROPIC_MODEL": "claude-sonnet-4-6"
+  },
+  "createdAt": "2026-05-03T19:52:07.323Z"
+}
