@@ -8,7 +8,10 @@ use App\Http\Controllers\Dosen\ResultController;
 use App\Http\Controllers\Dosen\StudentController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\Mahasiswa\CourseController;
+use App\Http\Controllers\Admin\SystemController;
+use App\Http\Controllers\Mahasiswa\SubjectController as MahasiswaSubjectController;
+use App\Http\Controllers\Mahasiswa\ExamController as MahasiswaExamController;
+use App\Http\Controllers\Mahasiswa\ResultController as MahasiswaResultController;
 
 Route::view('/', 'welcome')->name('home');
 Route::post('register', [RegisteredUserController::class, 'store'])->name('register.store');
@@ -23,6 +26,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::put('/subjects/{subject}/update-tutor', [AdminController::class, 'updateTutor'])->name('subjects.update-tutor');
     Route::get('/subjects/create', [AdminController::class, 'createSubject'])->name('subjects.create');
     Route::post('/subjects/store', [AdminController::class, 'storeSubject'])->name('subjects.store');
+    Route::get('/exams-monitor', [SystemController::class, 'monitorExams'])->name('exams.monitor');
+    Route::get('/settings', [SystemController::class, 'settings'])->name('settings.index');
+    Route::post('/settings', [SystemController::class, 'updateSettings'])->name('settings.update');
 });
 
 Route::middleware(['auth', 'dosen'])->prefix('dosen')->name('dosen.')->group(function () {
@@ -45,13 +51,18 @@ Route::middleware(['auth', 'dosen'])->prefix('dosen')->name('dosen.')->group(fun
 });
 
 Route::middleware(['auth', 'mahasiswa'])->prefix('mahasiswa')->name('mahasiswa.')->group(function () {
-    Route::get('/subjects', [CourseController::class, 'index'])->name('subjects.index');
-    Route::get('/subjects/available', [CourseController::class, 'available'])->name('subjects.available');
-    Route::post('/subjects/{subject}/join', [CourseController::class, 'join'])->name('subjects.join');
-    Route::get('/subjects/{subject}/exams', [CourseController::class, 'exams'])->name('subjects.exams');
-    Route::get('/exams/{exam}/take', [CourseController::class, 'takeExam'])->name('exams.take');
-    Route::post('/exams/{exam}/submit', [CourseController::class, 'submitExam'])->name('exams.submit');
-    Route::get('/exams/{exam}/result', [CourseController::class, 'examResult'])->name('exams.result');
+    // Mata Kuliah
+    Route::get('/subjects', [MahasiswaSubjectController::class, 'index'])->name('subjects.index');
+    Route::get('/subjects/available', [MahasiswaSubjectController::class, 'available'])->name('subjects.available');
+    Route::post('/subjects/{subject}/join', [MahasiswaSubjectController::class, 'join'])->name('subjects.join');
+    
+    // Ujian
+    Route::get('/subjects/{subject}/exams', [MahasiswaExamController::class, 'index'])->name('subjects.exams');
+    Route::get('/exams/{exam}/take', [MahasiswaExamController::class, 'show'])->name('exams.take');
+    Route::post('/exams/{exam}/submit', [MahasiswaExamController::class, 'store'])->name('exams.submit');
+    
+    // Hasil / Nilai
+    Route::get('/exams/{exam}/result', [MahasiswaResultController::class, 'show'])->name('exams.result');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {

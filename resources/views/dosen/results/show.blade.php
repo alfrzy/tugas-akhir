@@ -40,7 +40,7 @@
             <thead class="bg-slate-50 dark:bg-zinc-800/50 border-b border-slate-200 dark:border-zinc-800">
                 <tr>
                     <th class="py-4 px-6 text-xs font-black uppercase tracking-widest text-slate-500">Mahasiswa</th>
-                    <th class="py-4 px-6 text-xs font-black uppercase tracking-widest text-slate-500">Email</th>
+                    <th class="py-4 px-6 text-xs font-black uppercase tracking-widest text-slate-500">NIM</th>
                     <th class="py-4 px-6 text-xs font-black uppercase tracking-widest text-slate-500 text-center">Status</th>
                     <th class="py-4 px-6 text-xs font-black uppercase tracking-widest text-slate-500 text-right">Aksi</th>
                 </tr>
@@ -57,7 +57,7 @@
                             </div>
                         </td>
                         <td class="py-4 px-6 text-sm text-slate-500 font-medium">
-                            {{ $student->email }}
+                            {{ $student->nim }}
                         </td>
                         <td class="py-4 px-6 text-center">
                             <flux:badge color="emerald" variant="pill" size="sm" class="font-bold uppercase text-[9px]">Selesai</flux:badge>

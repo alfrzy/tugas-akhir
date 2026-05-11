@@ -35,6 +35,8 @@ class ExamController extends Controller
         'subject_id' => 'required',
         'title' => 'required',
         'duration'   => 'required|integer|min:1',
+        'start_time' => 'required|date',
+        'end_time'   => 'required|date|after:start_time',
         'questions' => 'required|array|min:1', 
     ]);
 
@@ -42,6 +44,8 @@ class ExamController extends Controller
         'subject_id' => $request->subject_id,
         'title' => $request->title,
         'duration'   => $request->duration,
+        'start_time' => $request->start_time,
+        'end_time'   => $request->end_time,
     ]);
 
     foreach ($request->questions as $q) {
@@ -96,12 +100,16 @@ public function update(Request $request, Exam $exam)
         'title' => 'required|string|max:255',
         'duration' => 'required|integer|min:1',
         'questions' => 'required|array|min:1',
+        'start_time' => 'required|date',
+        'end_time'   => 'required|date|after:start_time',
     ]);
 
     // 1. Update Header Ujian
     $exam->update([
         'title' => $request->title,
         'duration' => $request->duration,
+        'start_time' => $request->start_time,
+        'end_time' => $request->end_time,
     ]);
 
     // 2. Update Soal (Cara paling aman: hapus soal lama, masukkan yang baru)

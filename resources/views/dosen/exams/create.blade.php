@@ -65,6 +65,9 @@
                         suffix="Menit"
                         required 
                     />
+
+                    <flux:input type="datetime-local" label="Waktu Mulai" name="start_time" required />
+                    <flux:input type="datetime-local" label="Batas Akhir (Deadline)" name="end_time" required />
                 </div>
             </flux:card>
             <div class="flex items-center justify-between">

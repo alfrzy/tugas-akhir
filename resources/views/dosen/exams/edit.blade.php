@@ -24,6 +24,8 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <flux:input label="Judul Materi / BAB" name="title" value="{{ $exam->title }}" required />
                     <flux:input type="number" label="Durasi (Menit)" name="duration" value="{{ $exam->duration }}" required />
+                    <flux:input type="datetime-local" label="Waktu Mulai" name="start_time" required />
+                    <flux:input type="datetime-local" label="Batas Akhir (Deadline)" name="end_time" required />
                 </div>
             </flux:card>
 

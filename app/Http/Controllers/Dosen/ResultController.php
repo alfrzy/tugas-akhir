@@ -11,18 +11,16 @@ class ResultController extends Controller
 {
     public function index()
     {
-        // Mengambil ujian yang subject-nya dimiliki oleh dosen yang sedang login
-        $exams = Exam::whereHas('subject', function ($query) {
-            $query->where('user_id', auth()->id()); 
-        })
-        ->with(['subject'])
-        // Menghitung jumlah user_id unik di tabel answers melalui relasi hasManyThrough
-        ->withCount(['answers as total_students' => function ($query) {
-            $query->select(DB::raw('count(distinct(user_id))'));
-        }])
-        ->get();
+        // 1. Ambil Mata Kuliah milik Dosen beserta jumlah mahasiswa yang terdaftar
+        $subjects = \App\Models\Subject::where('user_id', auth()->id())
+            ->withCount('students') // Menghitung total mahasiswa di kelas ini (students_count)
+            ->with(['exams' => function($query) {
+                // 2. Ambil ujian di dalam matkul tersebut, dan hitung yang sudah submit
+                $query->withCount('submissions')->latest();
+            }])
+            ->get();
 
-        return view('dosen.results.index', compact('exams'));
+        return view('dosen.results.index', compact('subjects'));
     }
 
     public function show(Exam $exam)

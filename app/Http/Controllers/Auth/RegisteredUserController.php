@@ -22,6 +22,11 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'role' => ['required', 'string', 'in:dosen,mahasiswa'],
             'nim' => ['nullable', 'string', 'unique:users'],
+            'teacher_code' => ['required_if:role,dosen', 'in:DOSEN-NLP-2026'],
+            ], [
+            // Pesan error kustom (Opsional)
+            'teacher_code.required_if' => 'Kode Akses Dosen wajib diisi jika mendaftar sebagai Dosen.',
+            'teacher_code.in' => 'Kode Akses Dosen tidak valid! Hubungi Admin.',
         ]);
 
         // 2. Simpan ke Database
@@ -36,11 +41,6 @@ class RegisteredUserController extends Controller
         event(new Registered($user));
 
         Auth::login($user);
-
-        // 3. Redirect berdasarkan Role
-        if ($user->role === 'dosen') {
-            return redirect()->route('subjects.index');
-        }
 
         return redirect()->route('dashboard');
     }
