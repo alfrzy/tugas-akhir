@@ -10,13 +10,23 @@
         <flux:button :href="route('mahasiswa.subjects.index')" variant="ghost" icon="arrow-left" wire:navigate>Kembali</flux:button>
     </header>
 
-    {{-- ALERT ERROR JIKA DITOLAK OLEH CONTROLLER --}}
-    @if(session('error'))
-        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl flex items-center gap-3 shadow-sm animate-fade-in-down">
-            <flux:icon name="exclamation-circle" variant="solid" class="w-5 h-5 text-red-500" />
-            <span class="font-medium text-sm">{{ session('error') }}</span>
+    @php
+    $flashes = [
+        'success' => ['icon' => 'check-circle',       'classes' => 'bg-emerald-50 border-emerald-200 text-emerald-700'],
+        'warning' => ['icon' => 'exclamation-triangle','classes' => 'bg-amber-50 border-amber-200 text-amber-700'],
+        'info'    => ['icon' => 'information-circle', 'classes' => 'bg-blue-50 border-blue-200 text-blue-700'],
+        'error'   => ['icon' => 'x-circle',           'classes' => 'bg-red-50 border-red-200 text-red-700'],
+    ];
+@endphp
+
+@foreach($flashes as $type => $cfg)
+    @if(session($type))
+        <div class="border px-4 py-3 rounded-xl flex items-center gap-3 shadow-sm {{ $cfg['classes'] }}">
+            <flux:icon name="{{ $cfg['icon'] }}" variant="solid" class="w-5 h-5 shrink-0" />
+            <span class="font-medium text-sm">{{ session($type) }}</span>
         </div>
     @endif
+@endforeach
 
     <div class="grid grid-cols-1 gap-4">
         @forelse($exams as $exam)
@@ -57,12 +67,8 @@
                         {{-- Tampilan Jadwal Ujian --}}
                         <div class="mt-3 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-700 space-y-1">
                             <div class="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
-                                <flux:icon name="play-circle" variant="micro" class="text-emerald-500" />
-                                <span>Mulai: <strong>{{ $exam->start_time ? $exam->start_time->format('d M Y, H:i') : 'Belum diatur' }}</strong></span>
-                            </div>
-                            <div class="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
                                 <flux:icon name="stop-circle" variant="micro" class="text-red-500" />
-                                <span>Tutup: <strong>{{ $exam->end_time ? $exam->end_time->format('d M Y, H:i') : 'Belum diatur' }}</strong></span>
+                                <span>Deadline: <strong>{{ $exam->end_time ? $exam->end_time->format('d M Y, H:i') : 'Belum diatur' }}</strong></span>
                             </div>
                         </div>
                     </div>
@@ -106,11 +112,45 @@
                             <flux:badge color="emerald" variant="subtle" class="mb-2">Sedang Berlangsung</flux:badge>
                         @endif
 
-                        <flux:button :href="route('mahasiswa.exams.take', $exam->id)" variant="primary" icon="pencil-square" wire:navigate class="{{ $masaToleransi ? 'bg-amber-500 hover:bg-amber-600' : 'bg-blue-600 hover:bg-blue-700' }}">
+                        <flux:modal.trigger name="start-exam-{{ $exam->id }}">
+                        <flux:button type="button" variant="primary" icon="pencil-square" class="{{ $masaToleransi ? 'bg-amber-500 hover:bg-amber-600 text-white' : 'bg-blue-600 hover:bg-blue-700' }}">
                             Kerjakan Ujian
                         </flux:button>
-                    @endif
+                    </flux:modal.trigger>
+                <flux:modal name="start-exam-{{ $exam->id }}" class="md:w-[450px]">
+                    <div class="flex flex-col items-center text-center space-y-4">
+                        {{-- Ikon Play --}}
+                        <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center shadow-inner">
+                            <flux:icon name="play-circle" variant="solid" class="w-10 h-10" />
+                        </div>
+                        
+                        <div>
+                            <flux:heading size="lg" class="font-black text-slate-800 dark:text-slate-200">Mulai Ujian Sekarang?</flux:heading>
+                            <flux:text class="mt-3 text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                                Apakah Anda sudah siap? Durasi ujian selama <span class="font-bold text-slate-900 dark:text-white">{{ $exam->duration }} menit</span> akan langsung dihitung mundur setelah Anda menekan tombol di bawah. <br><br>
+                                <span class="text-xs italic text-red-500">Pastikan koneksi internet Anda stabil sebelum memulai.</span>
+                            </flux:text>
+                        </div>
+                    </div>
 
+                    <div class="flex gap-3 w-full mt-8">
+                        {{-- Tombol Batal (Menutup Modal) --}}
+                        <flux:modal.close class="w-full">
+                            <flux:button variant="subtle" class="w-full font-bold">Batal</flux:button>
+                        </flux:modal.close>
+                        
+                        {{-- Tombol Asli untuk Navigasi (Mulai Ujian) --}}
+                        <flux:button 
+                            :href="route('mahasiswa.exams.take', $exam->id)" 
+                            variant="primary" 
+                            wire:navigate 
+                            class="w-full font-bold shadow-lg {{ $masaToleransi ? 'bg-amber-500 hover:bg-amber-600 text-white shadow-amber-500/30' : 'bg-blue-600 hover:bg-blue-700 shadow-blue-500/30' }}"
+                        >
+                            Ya, Mulai Ujian
+                        </flux:button>
+                    </div>
+                </flux:modal>
+                    @endif
                 </div>
             </flux:card>
         @empty

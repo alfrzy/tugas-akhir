@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Subject extends Model
 {
-    protected $fillable = ['user_id', 'subject_name', 'subject_code'];
+    protected $fillable = ['user_id', 'subject_name', 'subject_code', 'join_code'];
 
     // TAMBAHKAN RELASI INI:
     public function user()
@@ -14,7 +14,8 @@ class Subject extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function exams() {
+    public function exams()
+    {
         return $this->hasMany(Exam::class, 'subject_id');
     }
 

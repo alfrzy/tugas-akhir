@@ -3,18 +3,20 @@
 namespace App\Http\Controllers\Dosen;
 
 use App\Http\Controllers\Controller;
+use App\Models\Answer;
 use App\Models\Exam;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Models\Subject;
+use App\Models\Submission;
+use App\Models\User;
 
 class ResultController extends Controller
 {
     public function index()
     {
         // 1. Ambil Mata Kuliah milik Dosen beserta jumlah mahasiswa yang terdaftar
-        $subjects = \App\Models\Subject::where('user_id', auth()->id())
+        $subjects = Subject::where('user_id', auth()->id())
             ->withCount('students') // Menghitung total mahasiswa di kelas ini (students_count)
-            ->with(['exams' => function($query) {
+            ->with(['exams' => function ($query) {
                 // 2. Ambil ujian di dalam matkul tersebut, dan hitung yang sudah submit
                 $query->withCount('submissions')->latest();
             }])
@@ -31,17 +33,17 @@ class ResultController extends Controller
         }
 
         // Ambil daftar mahasiswa yang sudah mengerjakan ujian ini
-        $students = \App\Models\User::whereHas('answers', function ($query) use ($exam) {
+        $students = User::whereHas('answers', function ($query) use ($exam) {
             $query->whereHas('question', function ($q) use ($exam) {
                 $q->where('exam_id', $exam->id);
             });
         })
-        ->with(['answers' => function ($query) use ($exam) {
-            $query->whereHas('question', function ($q) use ($exam) {
-                $q->where('exam_id', $exam->id);
-            });
-        }])
-        ->get();
+            ->with(['answers' => function ($query) use ($exam) {
+                $query->whereHas('question', function ($q) use ($exam) {
+                    $q->where('exam_id', $exam->id);
+                });
+            }])
+            ->get();
 
         return view('dosen.results.show', compact('exam', 'students'));
     }
@@ -49,16 +51,16 @@ class ResultController extends Controller
     public function showStudentAnswers($examId, $studentId)
     {
         // 1. Ambil data ujian dan mahasiswa
-        $exam = \App\Models\Exam::with('questions')->findOrFail($examId);
-        $student = \App\Models\User::findOrFail($studentId);
+        $exam = Exam::with('questions')->findOrFail($examId);
+        $student = User::findOrFail($studentId);
 
         // 2. Ambil data nilai akhir (Submission) dari tabel baru kita
-        $submission = \App\Models\Submission::where('user_id', $studentId)
+        $submission = Submission::where('user_id', $studentId)
             ->where('exam_id', $examId)
             ->first();
 
         // 3. Ambil rincian jawaban per soal
-        $answers = \App\Models\Answer::where('user_id', $studentId)
+        $answers = Answer::where('user_id', $studentId)
             ->whereHas('question', function ($query) use ($examId) {
                 $query->where('exam_id', $examId);
             })
@@ -73,14 +75,14 @@ class ResultController extends Controller
     public function publishScore($examId, $studentId)
     {
         // 1. Cari data submission milik mahasiswa untuk ujian ini
-        $submission = \App\Models\Submission::where('user_id', $studentId)
+        $submission = Submission::where('user_id', $studentId)
             ->where('exam_id', $examId)
             ->first();
 
         // 2. Jika datanya ada, ubah status is_published menjadi true
         if ($submission) {
             $submission->update([
-                'is_published' => true
+                'is_published' => true,
             ]);
 
             return back()->with('success', 'Seluruh nilai ujian berhasil dipublikasikan!');
@@ -88,5 +90,15 @@ class ResultController extends Controller
 
         // 3. Jika terjadi error (data tidak ditemukan)
         return back()->with('error', 'Gagal mempublikasikan nilai. Data ujian tidak ditemukan.');
+    }
+
+    public function recap()
+    {
+        // 1. Ambil semua mata kuliah yang diampu dosen ini
+        $subjects = Subject::where('user_id', auth()->id())
+            ->with(['exams.submissions.user', 'students'])
+            ->get();
+
+        return view('dosen.results.recap', compact('subjects'));
     }
 }

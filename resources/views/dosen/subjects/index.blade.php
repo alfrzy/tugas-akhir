@@ -3,7 +3,7 @@
 @section('content')
 <div class="p-6 space-y-8">
     
-    {{-- ALERT PESAN SUKSES (Muncul setelah Tambah / Edit) --}}
+    {{-- ALERT PESAN SUKSES --}}
     @if(session('success'))
         <div class="bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-xl flex items-center gap-3 shadow-sm animate-fade-in-down">
             <flux:icon name="check-circle" variant="solid" class="w-5 h-5 text-emerald-500" />
@@ -14,7 +14,7 @@
     <header class="flex justify-between items-center">
         <div>
             <flux:heading size="xl">Mata Kuliah Saya</flux:heading>
-            <flux:subheading>Kelola daftar kelas yang Anda ampu.</flux:subheading>
+            <flux:subheading>Kelola daftar kelas dan bagikan kode akses ke mahasiswa.</flux:subheading>
         </div>
         
         {{-- Tombol Tambah Kelas --}}
@@ -27,7 +27,8 @@
         @forelse($subjects as $subject)
             <flux:card class="flex flex-col justify-between hover:border-blue-300 transition-colors shadow-sm hover:shadow-md">
                 <div>
-                    <div class="flex justify-between mb-4">
+                    {{-- Header Card (Kode Matkul & Aksi) --}}
+                    <div class="flex justify-between mb-3">
                         <flux:badge color="blue" variant="subtle" class="font-bold tracking-wider">{{ $subject->subject_code }}</flux:badge>
                         <div class="flex gap-1">
                             {{-- Tombol Edit --}}
@@ -35,13 +36,26 @@
                                 <flux:button variant="subtle" size="sm" icon="pencil-square" class="text-blue-600 hover:bg-blue-50" />
                             </flux:modal.trigger>
 
-                            {{-- Tombol Hapus (Sekarang memicu Modal) --}}
+                            {{-- Tombol Hapus --}}
                             <flux:modal.trigger name="delete-subject-{{ $subject->id }}">
                                 <flux:button variant="subtle" size="sm" icon="trash" class="text-red-500 hover:text-red-600 hover:bg-red-50" />
                             </flux:modal.trigger>
                         </div>
                     </div>
-                    <flux:heading size="lg" class="text-slate-800 dark:text-white">{{ $subject->subject_name }}</flux:heading>
+                    
+                    {{-- Nama Mata Kuliah --}}
+                    <flux:heading size="lg" class="text-slate-800 dark:text-white leading-tight mb-5">{{ $subject->subject_name }}</flux:heading>
+                    
+                    {{-- KOTAK KODE AKSES KELAS --}}
+                    <div class="p-4 bg-indigo-50 dark:bg-indigo-900/30 rounded-xl border border-indigo-100 dark:border-indigo-800 flex items-center justify-between">
+                        <div>
+                            <p class="text-[10px] text-indigo-600 dark:text-indigo-400 font-bold uppercase tracking-widest mb-1">Kode Akses Kelas</p>
+                            <p class="font-mono font-black text-xl text-slate-800 dark:text-slate-200 tracking-[0.2em]">{{ $subject->join_code ?? 'KOSONG' }}</p>
+                        </div>
+                        <div class="w-10 h-10 bg-white dark:bg-slate-800 rounded-xl flex items-center justify-center shadow-sm">
+                            <flux:icon name="key" variant="solid" class="w-5 h-5 text-indigo-500" />
+                        </div>
+                    </div>
                 </div>
 
                 {{-- Modal Edit per Item --}}

@@ -5,6 +5,7 @@ namespace App\Services;
 use Sastrawi\Stemmer\StemmerFactory;
 use Sastrawi\StopWordRemover\StopWordRemoverFactory;
 
+
 class NlpScoringService
 {
     private function preprocessText($text)

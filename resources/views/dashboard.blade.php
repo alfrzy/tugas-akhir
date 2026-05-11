@@ -374,7 +374,7 @@
                     <div class="p-6 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/30 dark:to-emerald-900/30 rounded-xl border border-green-200 dark:border-green-500/50 transition-all duration-300 hover:border-green-400 dark:hover:border-green-400/80 hover:-translate-y-1 shadow-sm">
                         <flux:heading size="md" class="text-green-800 dark:text-green-300">📊 Hasil Penilaian</flux:heading>
                         <flux:text class="mt-2 text-xs text-slate-700 dark:text-slate-300">Cek skor esai Anda yang sudah dipublikasikan oleh dosen.</flux:text>
-                        <flux:button href="#" variant="subtle" class="mt-4 w-full bg-white dark:bg-slate-800 border border-green-200 dark:border-green-500/30 hover:border-green-400 text-green-600 transition-all duration-300 shadow-sm">
+                        <flux:button :href="route('mahasiswa.results.index')" variant="subtle" class="mt-4 w-full bg-white dark:bg-slate-800 border border-green-200 dark:border-green-500/30 hover:border-green-400 text-green-600 transition-all duration-300 shadow-sm">
                             Lihat Transkrip Nilai
                         </flux:button>
                     </div>

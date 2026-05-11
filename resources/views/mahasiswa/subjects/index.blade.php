@@ -2,6 +2,15 @@
 
 @section('content')
 <div class="p-6 space-y-8">
+    
+    {{-- ALERT PESAN SUKSES --}}
+    @if(session('success'))
+        <div class="bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-xl flex items-center gap-3 shadow-sm animate-fade-in-down">
+            <flux:icon name="check-circle" variant="solid" class="w-5 h-5 text-emerald-500" />
+            <span class="font-medium text-sm">{{ session('success') }}</span>
+        </div>
+    @endif
+
     <header class="flex justify-between items-center">
         <div>
             <flux:heading size="xl">Mata Kuliah Saya</flux:heading>

@@ -102,8 +102,8 @@
                     <div class="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                         <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
                     </div>
-                    <h3 class="text-xl font-bold text-slate-900 mb-3">Analisis Rinci & Transparan</h3>
-                    <p class="text-slate-600 leading-relaxed">Baik dosen maupun mahasiswa dapat melihat log perhitungan *scoring* untuk memastikan transparansi dan mencegah protes nilai.</p>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Analisis Rinci</h3>
+                    <p class="text-slate-600 leading-relaxed"> Dosen dapat melihat log perhitungan *scoring* untuk memabandingkan hasil perhitungan sistem dengan perhitungan dosen secara manual .</p>
                 </div>
             </div>
         </div>

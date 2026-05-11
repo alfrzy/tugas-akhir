@@ -16,7 +16,10 @@ class Submission extends Model
         'total_score',
         'is_published',
         'started_at',
-        'finished_at'
+        'finished_at',
+        'is_finalized',
+        'auto_submitted',
+
     ];
 
     // Mengatur format tanggal
@@ -24,6 +27,8 @@ class Submission extends Model
         'is_published' => 'boolean',
         'started_at' => 'datetime',
         'finished_at' => 'datetime',
+        'is_finalized' => 'boolean',
+        'auto_submitted' => 'boolean',
     ];
 
     // Relasi ke User (Mahasiswa)

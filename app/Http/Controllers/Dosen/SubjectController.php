@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Dosen;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Subject;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class SubjectController extends Controller
 {
@@ -12,6 +13,7 @@ class SubjectController extends Controller
     public function index()
     {
         $subjects = Subject::where('user_id', auth()->id())->get();
+
         return view('dosen.subjects.index', compact('subjects'));
     }
 
@@ -23,10 +25,13 @@ class SubjectController extends Controller
             'subject_name' => 'required|string|max:255',
         ]);
 
+        $kodeAcak = strtoupper(Str::random(6));
+
         Subject::create([
             'subject_code' => $request->subject_code,
             'subject_name' => $request->subject_name,
             'user_id' => auth()->id(), // Otomatis set ke dosen yang login
+            'join_code' => $kodeAcak,
         ]);
 
         return redirect()->back()->with('success', 'Mata kuliah berhasil ditambahkan!');
@@ -36,10 +41,12 @@ class SubjectController extends Controller
     public function update(Request $request, Subject $subject)
     {
         // Proteksi agar dosen tidak mengedit matkul dosen lain
-        if ($subject->user_id !== auth()->id()) abort(403);
+        if ($subject->user_id !== auth()->id()) {
+            abort(403);
+        }
 
         $request->validate([
-            'subject_code' => 'required|unique:subjects,subject_code,' . $subject->id,
+            'subject_code' => 'required|unique:subjects,subject_code,'.$subject->id,
             'subject_name' => 'required|string|max:255',
         ]);
 
@@ -51,9 +58,12 @@ class SubjectController extends Controller
     // Menghapus data mata kuliah (Hapus)
     public function destroy(Subject $subject)
     {
-        if ($subject->user_id !== auth()->id()) abort(403);
-        
+        if ($subject->user_id !== auth()->id()) {
+            abort(403);
+        }
+
         $subject->delete();
+
         return redirect()->back()->with('success', 'Mata kuliah berhasil dihapus.');
     }
 }

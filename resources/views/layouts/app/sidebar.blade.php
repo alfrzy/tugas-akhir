@@ -75,7 +75,7 @@
                     <flux:sidebar.item icon="academic-cap" :href="route('dosen.subjects.index')" :current="request()->routeIs('dosen.subjects.*')" wire:navigate class="hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600">
                         {{ __('Mata Kuliah Saya') }}
                         <flux:badge size="sm" color="blue" inset="top bottom" class="ml-auto">
-                            {{ auth()->user()->total_students_count ?? 0 }}
+                            {{ \App\Models\Subject::where('user_id', auth()->id())->count() }}
                         </flux:badge>
                     </flux:sidebar.item>
 
@@ -89,6 +89,10 @@
 
                     <flux:sidebar.item icon="users" :href="route('dosen.students.index')" :current="request()->routeIs('dosen.students.*')" wire:navigate class="hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600">
                         {{ __('Daftar Mahasiswa') }}
+                    </flux:sidebar.item>
+
+                    <flux:sidebar.item icon="table-cells" :href="route('dosen.results.recap')" :current="request()->routeIs('dosen.results.recap')" wire:navigate class="hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600">
+                        {{ __('Rekap Nilai') }}
                     </flux:sidebar.item>
                 </flux:sidebar.group>
             @endif
@@ -107,7 +111,7 @@
                     </flux:sidebar.item>
 
                     {{-- Link Riwayat Nilai bisa diarahkan nanti --}}
-                    <flux:sidebar.item icon="chart-bar" href="#" wire:navigate class="hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600">
+                    <flux:sidebar.item icon="chart-bar" :href="route('mahasiswa.results.index')" wire:navigate class="hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600">
                         {{ __('Riwayat Nilai') }}
                     </flux:sidebar.item>
                 </flux:sidebar.group>
