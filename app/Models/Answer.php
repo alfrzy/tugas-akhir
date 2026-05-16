@@ -16,6 +16,8 @@ class Answer extends Model
         'answer_text',
         'score',
         'calculation_log',
+        'ai_score',
+        'ai_feedback',
     ];
 
     protected $casts = [

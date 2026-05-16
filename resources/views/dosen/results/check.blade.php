@@ -19,6 +19,22 @@
         <flux:badge color="indigo" variant="subtle" class="font-black">MODUL PENILAIAN</flux:badge>
     </div>
 
+    {{-- ALERT PESAN SUKSES --}}
+    @if(session('success'))
+        <div class="bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-xl flex items-center gap-3 shadow-sm animate-fade-in-down">
+            <flux:icon name="check-circle" variant="solid" class="w-5 h-5 text-emerald-500" />
+            <span class="font-medium text-sm">{{ session('success') }}</span>
+        </div>
+    @endif
+
+    {{-- ALERT PESAN ERROR --}}
+    @if(session('error'))
+        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl flex items-start gap-3 shadow-sm animate-fade-in-down">
+            <flux:icon name="exclamation-circle" variant="solid" class="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+            <span class="font-medium text-sm">{{ session('error') }}</span>
+        </div>
+    @endif
+
     <!-- Header Informasi Mahasiswa -->
     <header class="bg-white dark:bg-zinc-900 p-6 rounded-3xl border border-slate-200 dark:border-zinc-800 shadow-sm">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -73,9 +89,18 @@
                 <!-- Header Kartu Soal -->
                 <div class="bg-slate-50 dark:bg-zinc-800/50 p-4 border-b border-slate-100 dark:border-zinc-800 flex justify-between items-center">
                     <span class="text-xs font-black uppercase tracking-widest text-indigo-500">Pertanyaan #{{ $index + 1 }}</span>
-                    <flux:badge color="indigo" size="sm" class="font-bold">
-                        Skor: {{ $answer->score ?? '0' }} / 100
-                    </flux:badge>
+                    
+                    <div class="flex items-center gap-3">
+                        <form action="{{ route('dosen.answers.ai-review', $answer->id) }}" method="POST">
+                            @csrf
+                            <flux:button type="submit" variant="subtle" size="sm" icon="sparkles" class="text-indigo-600">
+                                Minta Review AI
+                            </flux:button>
+                        </form>
+                        <flux:badge color="indigo" size="sm" class="font-bold">
+                            Skor Saat Ini: {{ $answer->score ?? '0' }} / 100
+                        </flux:badge>
+                    </div>
                 </div>
 
                 <div class="p-6 space-y-6">
@@ -231,6 +256,44 @@
                             </p>
                         </div>
                     @endif
+
+                    {{-- REVIEW AI --}}
+                    @if(isset($answer->ai_score))
+                    <div class="mt-6 border border-purple-200 dark:border-purple-900/50 rounded-2xl p-5 bg-purple-50/30 dark:bg-purple-900/10">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex items-center gap-2">
+                                <flux:icon name="sparkles" variant="solid" class="w-5 h-5 text-purple-600" />
+                                <h4 class="font-bold text-purple-900 dark:text-purple-300">Hasil Review AI (Semantic Scoring)</h4>
+                            </div>
+                            <flux:badge color="purple" size="sm" class="font-bold">
+                                Skor AI: {{ $answer->ai_score }} / 100
+                            </flux:badge>
+                        </div>
+                        <p class="text-sm text-purple-800 dark:text-purple-400 italic mb-4">
+                            "{{ $answer->ai_feedback }}"
+                        </p>
+                        
+                        <div class="pt-4 border-t border-purple-200 dark:border-purple-800 flex justify-end gap-2 items-center">
+                            <form action="{{ route('dosen.answers.update-score', $answer->id) }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="score" value="{{ $answer->ai_score }}">
+                                <flux:button type="submit" size="sm" variant="filled" color="purple" icon="check">
+                                    Gunakan Skor AI
+                                </flux:button>
+                            </form>
+                        </div>
+                    </div>
+                    @endif
+
+                    <div class="mt-4 flex justify-end items-center gap-2 bg-slate-50 dark:bg-zinc-800/50 p-3 rounded-xl border border-slate-100 dark:border-zinc-800">
+                        <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">Edit Skor Akhir</span>
+                        <form action="{{ route('dosen.answers.update-score', $answer->id) }}" method="POST" class="flex items-center gap-2">
+                            @csrf
+                            <flux:input type="number" name="score" value="{{ $answer->score }}" min="0" max="100" step="0.01" class="w-24 text-right" size="sm" required />
+                            <flux:button type="submit" size="sm" variant="primary" color="indigo">Simpan</flux:button>
+                        </form>
+                    </div>
+
                 </div>
             </flux:card>
         @endforeach

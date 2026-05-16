@@ -48,6 +48,8 @@ Route::middleware(['auth', 'dosen'])->prefix('dosen')->name('dosen.')->group(fun
     Route::get('/results/{exam}', [ResultController::class, 'show'])->name('results.show');
     Route::get('/results/{exam}/student/{student}', [ResultController::class, 'showStudentAnswers'])->name('results.student');
     Route::post('/results/{exam}/student/{student}/publish', [ResultController::class, 'publishScore'])->name('results.publish');
+    Route::post('/answers/{answer}/request-ai-review', [ResultController::class, 'requestAiReview'])->name('answers.ai-review');
+    Route::post('/answers/{answer}/update-score', [ResultController::class, 'updateScore'])->name('answers.update-score');
     Route::get('/rekap-nilai', [ResultController::class, 'recap'])->name('results.recap');
 });
 

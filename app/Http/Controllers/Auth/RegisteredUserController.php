@@ -22,7 +22,7 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'role' => ['required', 'string', 'in:dosen,mahasiswa'],
             'nim' => ['nullable', 'string', 'unique:users'],
-            'teacher_code' => ['required_if:role,dosen', 'in:DOSEN-NLP-2026'],
+            'teacher_code' => ['nullable','required_if:role,dosen', 'in:DOSEN-NLP-2026'],
             ], [
             // Pesan error kustom (Opsional)
             'teacher_code.required_if' => 'Kode Akses Dosen wajib diisi jika mendaftar sebagai Dosen.',
