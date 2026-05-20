@@ -49,8 +49,8 @@
                 
                 {{-- Bagian Kiri: Info Ujian & Jadwal --}}
                 <div class="flex items-start gap-4">
-                    <div class="p-3 bg-indigo-100 dark:bg-indigo-900 rounded-lg shrink-0 mt-1">
-                        <flux:icon.document-text class="text-indigo-600 dark:text-indigo-300" />
+                    <div class="p-3 bg-brand-purple/10 rounded-lg shrink-0 mt-1">
+                        <flux:icon.document-text class="text-brand-purple" />
                     </div>
                     <div>
                         <flux:heading size="lg">{{ $exam->title }}</flux:heading>
@@ -67,7 +67,7 @@
                         {{-- Tampilan Jadwal Ujian --}}
                         <div class="mt-3 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-700 space-y-1">
                             <div class="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
-                                <flux:icon name="stop-circle" variant="micro" class="text-red-500" />
+                                <flux:icon name="stop-circle" variant="micro" class="text-error" />
                                 <span>Deadline: <strong>{{ $exam->end_time ? $exam->end_time->format('d M Y, H:i') : 'Belum diatur' }}</strong></span>
                             </div>
                         </div>
@@ -113,14 +113,14 @@
                         @endif
 
                         <flux:modal.trigger name="start-exam-{{ $exam->id }}">
-                        <flux:button type="button" variant="primary" icon="pencil-square" class="{{ $masaToleransi ? 'bg-amber-500 hover:bg-amber-600 text-white' : 'bg-blue-600 hover:bg-blue-700' }}">
+                        <flux:button type="button" variant="primary" icon="pencil-square" class="{{ $masaToleransi ? '!bg-warning !hover:bg-[#E5933A] text-white' : '' }}">
                             Kerjakan Ujian
                         </flux:button>
                     </flux:modal.trigger>
                 <flux:modal name="start-exam-{{ $exam->id }}" class="md:w-[450px]">
                     <div class="flex flex-col items-center text-center space-y-4">
                         {{-- Ikon Play --}}
-                        <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center shadow-inner">
+                        <div class="w-16 h-16 bg-brand-purple/10 text-brand-purple rounded-full flex items-center justify-center shadow-inner">
                             <flux:icon name="play-circle" variant="solid" class="w-10 h-10" />
                         </div>
                         
@@ -144,7 +144,7 @@
                             :href="route('mahasiswa.exams.take', $exam->id)" 
                             variant="primary" 
                             wire:navigate 
-                            class="w-full font-bold shadow-lg {{ $masaToleransi ? 'bg-amber-500 hover:bg-amber-600 text-white shadow-amber-500/30' : 'bg-blue-600 hover:bg-blue-700 shadow-blue-500/30' }}"
+                            class="w-full font-bold {{ $masaToleransi ? '!bg-warning !hover:bg-[#E5933A] text-white' : '' }}"
                         >
                             Ya, Mulai Ujian
                         </flux:button>
@@ -154,8 +154,12 @@
                 </div>
             </flux:card>
         @empty
-            <flux:card class="p-10 text-center">
-                <flux:text>Belum ada ujian yang diterbitkan untuk mata kuliah ini.</flux:text>
+            <flux:card class="py-16 text-center border-dashed border-2 shadow-none border-slate-200">
+                <div class="w-16 h-16 mx-auto bg-brand-purple/10 rounded-full flex items-center justify-center mb-4">
+                    <flux:icon name="inbox" class="h-8 w-8 text-brand-purple" />
+                </div>
+                <flux:heading size="md" class="text-primary mb-2">Belum ada ujian yang diterbitkan</flux:heading>
+                <flux:text class="text-sm text-text-muted">Dosen belum menerbitkan soal untuk kelas ini. <br>Silakan periksa kembali nanti secara berkala.</flux:text>
             </flux:card>
         @endforelse
     </div>

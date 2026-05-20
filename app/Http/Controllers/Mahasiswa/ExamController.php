@@ -46,8 +46,9 @@ class ExamController extends Controller
 
         // 4. Kalkulasi Sisa Waktu
         $deadline = $submission->started_at->copy()->addMinutes($exam->duration);
-        if ($exam->end_time && $exam->end_time->lt($deadline)) {
-            $deadline = $exam->end_time;
+        $batasToleransi = $exam->end_time ? $exam->end_time->copy()->addHours(5) : null;
+        if ($batasToleransi && $batasToleransi->lt($deadline)) {
+            $deadline = $batasToleransi;
         }
 
         $remainingSeconds = now()->diffInSeconds($deadline, false);
@@ -79,8 +80,9 @@ class ExamController extends Controller
 
         // Hitung deadline untuk mendeteksi auto-submit
         $deadline = $submission->started_at->copy()->addMinutes($exam->duration);
-        if ($exam->end_time && $exam->end_time->lt($deadline)) {
-            $deadline = $exam->end_time;
+        $batasToleransi = $exam->end_time ? $exam->end_time->copy()->addHours(5) : null;
+        if ($batasToleransi && $batasToleransi->lt($deadline)) {
+            $deadline = $batasToleransi;
         }
 
         // Toleransi 10 detik keterlambatan jaringan

@@ -40,13 +40,16 @@ Berikan output HANYA dalam format JSON yang valid tanpa markdown formatting (jan
 
         $response = Http::withOptions(['verify' => false])->withHeaders([
             'Content-Type' => 'application/json',
-        ])->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key={$apiKey}", [
+        ])->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key={$apiKey}", [
             'contents' => [
                 [
                     'parts' => [
                         ['text' => $prompt]
                     ]
                 ]
+            ],
+            'generationConfig' => [
+                'responseMimeType' => 'application/json',
             ]
         ]);
 
@@ -56,6 +59,8 @@ Berikan output HANYA dalam format JSON yang valid tanpa markdown formatting (jan
                 $resultText = $data['candidates'][0]['content']['parts'][0]['text'];
                 // Bersihkan text dari kemungkinan markdown block
                 $resultText = str_replace(['```json', '```JSON', '```'], '', $resultText);
+                // Hapus trailing comma yang membuat JSON tidak valid
+                $resultText = preg_replace('/,\s*([\]}])/m', '$1', $resultText);
                 $result = json_decode(trim($resultText), true);
 
                 if (json_last_error() === JSON_ERROR_NONE && isset($result['score']) && isset($result['feedback'])) {

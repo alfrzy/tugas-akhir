@@ -116,6 +116,45 @@ class ResultController extends Controller
         }
     }
 
+    public function requestAiReviewAll(Request $request, $examId, $studentId, \App\Services\AiReviewService $aiService)
+    {
+        $exam = Exam::with('subject')->findOrFail($examId);
+
+        // Pastikan dosen yang mengakses berhak
+        if ($exam->subject->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $answers = Answer::where('user_id', $studentId)
+            ->whereHas('question', function ($query) use ($examId) {
+                $query->where('exam_id', $examId);
+            })
+            ->with('question')
+            ->get();
+
+        if ($answers->isEmpty()) {
+            return back()->with('error', 'Tidak ada jawaban untuk di-review.');
+        }
+
+        try {
+            foreach ($answers as $answer) {
+                // Hanya review jika ada jawaban
+                if (!empty($answer->answer_text)) {
+                    $result = $aiService->reviewAnswer($answer->question->key_answer, $answer->answer_text);
+                    
+                    $answer->update([
+                        'ai_score' => $result['score'],
+                        'ai_feedback' => $result['feedback']
+                    ]);
+                }
+            }
+
+            return back()->with('success', 'Seluruh jawaban AI Review berhasil didapatkan.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal memanggil AI: ' . $e->getMessage());
+        }
+    }
+
     public function updateScore(Request $request, $answerId)
     {
         $request->validate([

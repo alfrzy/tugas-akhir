@@ -183,7 +183,7 @@
                 <div>
                     <flux:heading level="2" size="lg" class="text-blue-600 dark:text-blue-400">Halo, Dosen {{ Auth::user()->name }}!</flux:heading>
                     <flux:text class="mt-2 text-slate-600 dark:text-slate-300 max-w-2xl">
-                        Selamat datang di panel pengajar. Mesin NLP TF-IDF siap membantu Anda memproses penilaian esai mahasiswa secara otomatis dan akurat.
+                        Selamat datang di panel pengajar. Mesin NLP siap membantu Anda memproses penilaian esai mahasiswa secara otomatis dan akurat.
                     </flux:text>
                 </div>
                 <flux:button href="{{ route('dosen.subjects.index') }}" variant="primary" icon="academic-cap" wire:navigate class="bg-white text-blue-600 hover:bg-blue-50 transition-all duration-300 shadow-lg hover:shadow-blue-500/30 whitespace-nowrap shrink-0">
@@ -262,7 +262,7 @@
                                 </div>
                                 <div>
                                     <p class="text-sm text-slate-800 dark:text-slate-200">
-                                        <span class="font-bold">{{ $submission->user->name ?? 'Mahasiswa' }}</span> baru saja mengumpulkan esai.
+                                        <span class="font-bold">{{ $submission->user->name ?? 'Mahasiswa' }}</span> sudah mengumpulkan esai.
                                     </p>
                                     <p class="text-xs text-slate-500 mt-0.5">{{ $submission->exam->title ?? 'Ujian' }} • {{ $submission->created_at->diffForHumans() }}</p>
                                 </div>

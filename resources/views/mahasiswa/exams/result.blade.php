@@ -9,6 +9,15 @@
                             
     // Fallback yang aman jika data tidak ditemukan
     $finalScore = $submission ? $submission->total_score : 0;
+    
+    // Cek Keterlambatan
+    $isLate = false;
+    $latePenalty = 0;
+    if ($submission && $submission->finished_at && $exam->end_time && $submission->finished_at > $exam->end_time) {
+        $isLate = true;
+        $jamTerlambat = min(ceil($exam->end_time->diffInMinutes($submission->finished_at) / 60), 5);
+        $latePenalty = $jamTerlambat * 10;
+    }
 @endphp
 
 <div class="p-6 max-w-4xl mx-auto space-y-8">
@@ -18,11 +27,25 @@
     </header>
 
     {{-- Ringkasan Skor Utama (Membaca dari Submission) --}}
-    <flux:card class="flex flex-col items-center justify-center p-8 border-t-4 border-indigo-500">
+    <flux:card class="flex flex-col items-center justify-center p-8 border-t-4 border-indigo-500 relative overflow-hidden">
+        @if($isLate)
+            <div class="absolute top-0 right-0 bg-rose-500 text-white text-[10px] font-black px-3 py-1 rounded-bl-xl shadow-sm">
+                TELAT MENGUMPULKAN
+            </div>
+        @endif
+        
         <flux:text class="uppercase tracking-widest text-zinc-500 font-bold">Skor Akhir Anda</flux:text>
-        <div class="text-6xl font-black text-indigo-600 my-4">
+        
+        <div class="text-6xl font-black text-indigo-600 mt-4 mb-2">
             {{ number_format($finalScore, 1) }}
         </div>
+        
+        @if($isLate)
+            <div class="mb-5 text-sm font-bold text-rose-600 bg-rose-50 px-4 py-1.5 rounded-full border border-rose-200 flex items-center gap-2">
+                <flux:icon name="exclamation-triangle" variant="solid" class="w-4 h-4" />
+                <span>Nilai dipotong <strong>{{ $latePenalty }}%</strong> karena keterlambatan.</span>
+            </div>
+        @endif
         <flux:badge color="{{ $finalScore >= 70 ? 'green' : 'orange' }}" size="lg">
             {{ $finalScore >= 70 ? 'Lulus Kompetensi' : 'Perlu Belajar Lagi' }}
         </flux:badge>

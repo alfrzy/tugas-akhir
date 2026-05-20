@@ -63,16 +63,36 @@
                     $isAlreadyPublished = $submission ? $submission->is_published : false;
                 @endphp
 
-                @if(!$isAlreadyPublished && $answers->count() > 0)
-                    <form action="{{ route('dosen.results.publish', ['exam' => $exam->id, 'student' => $student->id]) }}" method="POST">
-                        @csrf
-                        <flux:button type="submit" variant="filled" color="emerald" icon="check-circle" size="sm">
-                            Publish Nilai
-                        </flux:button>
-                    </form>
-                @elseif($answers->count() > 0)
-                    <flux:badge color="emerald" variant="subtle" icon="check">Nilai Sudah Terbit</flux:badge>
-                @endif
+                <div class="flex items-center gap-3">
+                    @if($answers->count() > 0)
+                        @php
+                            $hasAiReview = $answers->whereNotNull('ai_score')->count() > 0;
+                        @endphp
+
+                        @if($hasAiReview)
+                            <flux:badge color="purple" variant="subtle" icon="sparkles">Sudah Direview AI</flux:badge>
+                        @else
+                            <form action="{{ route('dosen.results.ai-review-all', ['exam' => $exam->id, 'student' => $student->id]) }}" method="POST" x-data="{ loading: false }" x-on:submit="loading = true">
+                                @csrf
+                                <flux:button type="submit" variant="subtle" size="sm" icon="sparkles" class="text-indigo-600" x-bind:disabled="loading">
+                                    <span x-show="!loading">Review Jawaban dengan AI</span>
+                                    <span x-show="loading">Memproses...</span>
+                                </flux:button>
+                            </form>
+                        @endif
+                    @endif
+
+                    @if(!$isAlreadyPublished && $answers->count() > 0)
+                        <form action="{{ route('dosen.results.publish', ['exam' => $exam->id, 'student' => $student->id]) }}" method="POST">
+                            @csrf
+                            <flux:button type="submit" variant="filled" color="emerald" icon="check-circle" size="sm">
+                                Publish Nilai
+                            </flux:button>
+                        </form>
+                    @elseif($answers->count() > 0)
+                        <flux:badge color="emerald" variant="subtle" icon="check">Nilai Sudah Terbit</flux:badge>
+                    @endif
+                </div>
             </div>
         </div>
     </header>
@@ -91,12 +111,6 @@
                     <span class="text-xs font-black uppercase tracking-widest text-indigo-500">Pertanyaan #{{ $index + 1 }}</span>
                     
                     <div class="flex items-center gap-3">
-                        <form action="{{ route('dosen.answers.ai-review', $answer->id) }}" method="POST">
-                            @csrf
-                            <flux:button type="submit" variant="subtle" size="sm" icon="sparkles" class="text-indigo-600">
-                                Minta Review AI
-                            </flux:button>
-                        </form>
                         <flux:badge color="indigo" size="sm" class="font-bold">
                             Skor Saat Ini: {{ $answer->score ?? '0' }} / 100
                         </flux:badge>
@@ -158,7 +172,7 @@
                                 <summary class="flex items-center justify-between p-4 cursor-pointer bg-indigo-50/50 dark:bg-indigo-900/20 hover:bg-indigo-100/50 dark:hover:bg-indigo-900/40 transition-colors">
                                     <div class="flex items-center gap-3">
                                         <flux:icon name="calculator" variant="outline" class="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
-                                        <span class="font-bold text-sm text-indigo-900 dark:text-indigo-300">Lihat Detail Perhitungan Algoritma (Log Mesin Asli)</span>
+                                        <span class="font-bold text-sm text-indigo-900 dark:text-indigo-300">Lihat Detail Perhitungan Algoritma </span>
                                     </div>
                                     <span class="transition-transform duration-300 group-open:-rotate-180 text-indigo-500">
                                         <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>

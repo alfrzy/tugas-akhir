@@ -32,7 +32,7 @@
                     </div>
 
                     <div class="mt-6">
-                        <flux:button variant="primary" icon="plus" class="w-full bg-blue-600 hover:bg-blue-700" :href="route('dosen.exams.create', $subject->id)" wire:navigate>
+                        <flux:button variant="primary" icon="plus" class="w-full" :href="route('dosen.exams.create', $subject->id)" wire:navigate>
                             Buat Ujian Baru
                         </flux:button>
                     </div>
@@ -55,8 +55,8 @@
                 <div class="space-y-3">
                     {{-- Sub-header Nama Mata Kuliah --}}
                     <div class="flex items-center gap-2 px-2">
-                        <div class="w-1 h-6 bg-indigo-500 rounded-full"></div>
-                        <flux:heading size="md" class="text-indigo-600">{{ $subject->subject_name }}</flux:heading>
+                        <div class="w-1 h-6 bg-brand-purple rounded-full"></div>
+                        <flux:heading size="md" class="text-brand-purple">{{ $subject->subject_name }}</flux:heading>
                         <flux:badge color="zinc" size="sm" variant="subtle">{{ $subject->subject_code }}</flux:badge>
                     </div>
 
@@ -97,11 +97,11 @@
                                         {{-- Bungkus deretan tombol dengan div dan mr-4 --}}
                                         <flux:table.cell align="end">
                                             <div class="mr-4 flex justify-end gap-2">
-                                                <flux:button variant="ghost" size="sm" icon="eye" class="text-blue-600 hover:bg-blue-50" :href="route('dosen.exams.show', $exam->id)" wire:navigate />
-                                                <flux:button variant="ghost" size="sm" icon="pencil-square" class="text-indigo-600 hover:bg-indigo-50" :href="route('dosen.exams.edit', $exam->id)" wire:navigate />
+                                                <flux:button variant="ghost" size="sm" icon="eye" class="text-brand-purple hover:bg-brand-purple/10" :href="route('dosen.exams.show', $exam->id)" wire:navigate />
+                                                <flux:button variant="ghost" size="sm" icon="pencil-square" class="text-brand-purple hover:bg-brand-purple/10" :href="route('dosen.exams.edit', $exam->id)" wire:navigate />
 
                                                 <flux:modal.trigger name="delete-exam-{{ $exam->id }}">
-                                                    <flux:button variant="ghost" size="sm" icon="trash" class="text-red-500 hover:text-red-600 hover:bg-red-50" />
+                                                    <flux:button variant="ghost" size="sm" icon="trash" class="text-error hover:bg-error/10" />
                                                 </flux:modal.trigger>
 
                                                 <flux:modal name="delete-exam-{{ $exam->id }}" class="md:w-[400px]">
@@ -138,10 +138,12 @@
         @endforeach
 
         @if(!$hasExams)
-            <flux:card class="py-16 text-center border-dashed border-2 shadow-none">
-                <flux:icon name="document-plus" class="mx-auto h-12 w-12 text-slate-300 mb-4" />
-                <flux:heading size="md" class="text-slate-500">Belum ada ujian yang diterbitkan.</flux:heading>
-                <flux:text class="text-xs">Klik tombol "Buat Ujian Baru" di atas untuk memulai.</flux:text>
+            <flux:card class="py-16 text-center border-dashed border-2 shadow-none border-slate-200">
+                <div class="w-16 h-16 mx-auto bg-brand-purple/10 rounded-full flex items-center justify-center mb-4">
+                    <flux:icon name="document-plus" class="h-8 w-8 text-brand-purple" />
+                </div>
+                <flux:heading size="md" class="text-primary mb-2">Belum ada ujian yang diterbitkan</flux:heading>
+                <flux:text class="text-sm text-text-muted mb-6">Pilih salah satu mata kuliah di atas dan buat ujian esai pertama Anda untuk mulai mengevaluasi mahasiswa secara otomatis.</flux:text>
             </flux:card>
         @endif
     </section>

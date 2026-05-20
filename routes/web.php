@@ -39,7 +39,10 @@ Route::middleware(['auth', 'dosen'])->prefix('dosen')->name('dosen.')->group(fun
     Route::get('/exams', [ExamController::class, 'index'])->name('exams.index');
     Route::get('/exams/create/{subject}', [ExamController::class, 'create'])->name('exams.create');
     Route::post('/exams/store', [ExamController::class, 'store'])->name('exams.store');
+    Route::get('/exams-template/download', [ExamController::class, 'downloadTemplate'])->name('exams.template');
     Route::get('/students', [StudentController::class, 'index'])->name('students.index');
+    Route::delete('/students/{subject}/remove/{student}', [StudentController::class, 'removeStudent'])->name('students.remove');
+    Route::get('/students/{subject}/progress/{student}', [StudentController::class, 'showProgress'])->name('students.progress');
     Route::get('/exams/{exam}', [ExamController::class, 'show'])->name('exams.show');
     Route::delete('/exams/{exam}', [ExamController::class, 'destroy'])->name('exams.destroy');
     Route::get('/exams/{exam}/edit', [ExamController::class, 'edit'])->name('exams.edit');
@@ -48,6 +51,7 @@ Route::middleware(['auth', 'dosen'])->prefix('dosen')->name('dosen.')->group(fun
     Route::get('/results/{exam}', [ResultController::class, 'show'])->name('results.show');
     Route::get('/results/{exam}/student/{student}', [ResultController::class, 'showStudentAnswers'])->name('results.student');
     Route::post('/results/{exam}/student/{student}/publish', [ResultController::class, 'publishScore'])->name('results.publish');
+    Route::post('/results/{exam}/student/{student}/ai-review-all', [ResultController::class, 'requestAiReviewAll'])->name('results.ai-review-all');
     Route::post('/answers/{answer}/request-ai-review', [ResultController::class, 'requestAiReview'])->name('answers.ai-review');
     Route::post('/answers/{answer}/update-score', [ResultController::class, 'updateScore'])->name('answers.update-score');
     Route::get('/rekap-nilai', [ResultController::class, 'recap'])->name('results.recap');

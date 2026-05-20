@@ -27,37 +27,91 @@ class ExamController extends Controller
         return view('dosen.exams.create', compact('subject'));
     }
 
-    // 4. Proses Simpan Ujian & Soal
-    public function store(Request $request)
-{
-    // Validasi bahwa minimal ada 1 soal
-    $request->validate([
-        'subject_id' => 'required',
-        'title' => 'required',
-        'duration'   => 'required|integer|min:1',
-        'start_time' => 'required|date',
-        'end_time'   => 'required|date|after:start_time',
-        'questions' => 'required|array|min:1', 
-    ]);
+    public function downloadTemplate()
+    {
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=template_soal.csv",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
 
-    $exam = Exam::create([
-        'subject_id' => $request->subject_id,
-        'title' => $request->title,
-        'duration'   => $request->duration,
-        'start_time' => $request->start_time,
-        'end_time'   => $request->end_time,
-    ]);
+        $columns = ['Pertanyaan', 'Kunci Jawaban'];
 
-    foreach ($request->questions as $q) {
-        Question::create([
-            'exam_id' => $exam->id,
-            'question_text' => $q['text'],
-            'key_answer' => $q['key'],
-        ]);
+        $callback = function() use($columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+            
+            // Contoh isi template
+            fputcsv($file, ['Jelaskan apa itu OOP?', 'Object Oriented Programming adalah paradigma pemrograman berbasis objek.']);
+            fputcsv($file, ['Sebutkan fungsi sistem operasi.', 'Sistem operasi berfungsi sebagai jembatan antara perangkat keras dan pengguna.']);
+            
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 
-    return redirect()->route('dosen.exams.index')->with('success', 'Berhasil membuat ujian BAB dengan beberapa soal.');
-}
+    // 4. Proses Simpan Ujian & Soal
+    public function store(Request $request)
+    {
+        // Validasi, pastikan minimal ada soal manual ATAU ada file CSV
+        $request->validate([
+            'subject_id' => 'required',
+            'title' => 'required',
+            'duration'   => 'required|integer|min:1',
+            'start_time' => 'required|date',
+            'end_time'   => 'required|date|after:start_time',
+            'questions'  => 'required_without:csv_file|array', 
+            'csv_file'   => 'nullable|file|mimes:csv,txt'
+        ]);
+
+        $exam = Exam::create([
+            'subject_id' => $request->subject_id,
+            'title' => $request->title,
+            'duration'   => $request->duration,
+            'start_time' => $request->start_time,
+            'end_time'   => $request->end_time,
+        ]);
+
+        // 1. Simpan soal dari form manual (jika ada)
+        if ($request->has('questions')) {
+            foreach ($request->questions as $q) {
+                if (!empty($q['text']) && !empty($q['key'])) {
+                    Question::create([
+                        'exam_id' => $exam->id,
+                        'question_text' => $q['text'],
+                        'key_answer' => $q['key'],
+                    ]);
+                }
+            }
+        }
+
+        // 2. Simpan soal dari file CSV (jika ada upload)
+        if ($request->hasFile('csv_file')) {
+            $path = $request->file('csv_file')->getRealPath();
+            $data = array_map('str_getcsv', file($path));
+            
+            // Hilangkan header jika ada (Mendeteksi dari kolom pertama berbunyi 'Pertanyaan' / 'pertanyaan')
+            if (count($data) > 0 && strtolower(trim($data[0][0])) === 'pertanyaan') {
+                array_shift($data);
+            }
+
+            foreach ($data as $row) {
+                // Pastikan ada setidaknya 2 kolom yang tidak kosong (Pertanyaan & Kunci)
+                if (count($row) >= 2 && !empty(trim($row[0])) && !empty(trim($row[1]))) {
+                    Question::create([
+                        'exam_id' => $exam->id,
+                        'question_text' => trim($row[0]),
+                        'key_answer' => trim($row[1]),
+                    ]);
+                }
+            }
+        }
+
+        return redirect()->route('dosen.exams.index')->with('success', 'Berhasil membuat ujian beserta soal-soalnya.');
+    }
 
     public function show(Exam $exam)
 {

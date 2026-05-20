@@ -83,11 +83,18 @@
 
                                         {{-- Status --}}
                                         <td class="py-4 px-6 text-right">
-                                            @if($data['score'] != -1)
-                                                <flux:badge color="emerald" variant="subtle" size="sm">Tuntas</flux:badge>
-                                            @else
-                                                <flux:badge color="red" variant="solid" size="sm">Belum Mengerjakan</flux:badge>
-                                            @endif
+                                            <div class="flex items-center justify-end gap-2">
+                                                @if($data['score'] != -1)
+                                                    <flux:badge color="emerald" variant="subtle" size="sm">Tuntas</flux:badge>
+                                                    @if($data['submission'] && $data['submission']->is_published)
+                                                        <flux:badge color="indigo" variant="subtle" size="sm" icon="check-badge">Dipublish</flux:badge>
+                                                    @else
+                                                        <flux:badge color="amber" variant="subtle" size="sm" icon="clock">Belum Publish</flux:badge>
+                                                    @endif
+                                                @else
+                                                    <flux:badge color="red" variant="solid" size="sm">Belum Mengerjakan</flux:badge>
+                                                @endif
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach

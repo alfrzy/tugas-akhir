@@ -1,5 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Nunito:wght@400;700;900&display=swap');
 @import 'tailwindcss';
 @import '../../vendor/livewire/flux/dist/flux.css';
+
 
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
@@ -9,41 +11,55 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-heading: 'Nunito', ui-rounded, 'SF Pro Rounded', system-ui, sans-serif;
 
-    --color-zinc-50: #fafafa;
-    --color-zinc-100: #f5f5f5;
-    --color-zinc-200: #e5e5e5;
-    --color-zinc-300: #d4d4d4;
-    --color-zinc-400: #a3a3a3;
-    --color-zinc-500: #737373;
-    --color-zinc-600: #525252;
-    --color-zinc-700: #404040;
-    --color-zinc-800: #262626;
-    --color-zinc-900: #171717;
-    --color-zinc-950: #0a0a0a;
+    /* Semantic Colors from DESIGN.md */
+    --color-primary: #151531;
+    --color-primary-accent: #2A2A63;
+    --color-brand-purple: #6868F7;
+    --color-success: #DAF9D4;
+    --color-warning: #FFA340;
+    --color-error: #D63A35;
 
-    --color-accent: var(--color-neutral-800);
-    --color-accent-content: var(--color-neutral-800);
-    --color-accent-foreground: var(--color-white);
+    /* Neutrals */
+    --color-surface-100: #FFFFFF;
+    --color-surface-200: #FAFAFA;
+    --color-surface-300: #F8F9FA;
+    --color-surface-400: #F1F3F5;
+    --color-border-default: #E9ECEF;
+    --color-border-hover: #CED4DA;
+    --color-text-muted: #343A40;
+
+    /* Overriding Flux default accent colors to Brand Purple */
+    --color-accent: #6868F7;
+    --color-accent-content: #6868F7;
+    --color-accent-foreground: #FFFFFF;
 }
 
 @layer theme {
     .dark {
-        --color-accent: var(--color-white);
-        --color-accent-content: var(--color-white);
-        --color-accent-foreground: var(--color-neutral-800);
+        --color-accent: #6868F7;
+        --color-accent-content: #6868F7;
+        --color-accent-foreground: #FFFFFF;
     }
 }
 
 @layer base {
-
     *,
     ::after,
     ::before,
     ::backdrop,
     ::file-selector-button {
-        border-color: var(--color-gray-200, currentColor);
+        border-color: var(--color-border-default, currentColor);
+    }
+
+    body {
+        @apply font-sans text-text-muted bg-surface-200;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        @apply font-heading text-primary;
     }
 }
 
@@ -52,15 +68,52 @@
 }
 
 [data-flux-label] {
-    @apply  !mb-0 !leading-tight;
+    @apply !mb-0 !leading-tight font-heading font-bold text-primary text-[14px];
 }
 
 input:focus[data-flux-control],
 textarea:focus[data-flux-control],
 select:focus[data-flux-control] {
-    @apply outline-hidden ring-2 ring-accent ring-offset-2 ring-offset-accent-foreground;
+    @apply outline-hidden ring-[3px] ring-brand-purple/10 border-brand-purple;
 }
 
-/* \[:where(&)\]:size-4 {
-    @apply size-4;
-} */
+/* Base input overrides */
+input[data-flux-control],
+textarea[data-flux-control],
+select[data-flux-control] {
+    @apply rounded-[6px] border-border-default bg-white text-primary;
+}
+
+/* Buttons overriding to match DESIGN.md */
+[data-flux-button] {
+    @apply rounded-[8px] font-sans font-semibold;
+}
+
+/* Override default primary buttons */
+[data-flux-button][data-variant="primary"] {
+    @apply bg-brand-purple text-white shadow-[0px_1px_3px_0px_rgba(0,0,0,0.1)];
+    border: none;
+}
+
+[data-flux-button][data-variant="primary"]:hover {
+    @apply bg-[#5555E0] shadow-[0px_4px_8px_0px_rgba(0,0,0,0.15)];
+}
+
+/* Cards overriding */
+[data-flux-card] {
+    @apply bg-white border border-border-default rounded-[8px] shadow-[0px_2px_1px_0px_rgba(13,19,27,0.05)];
+}
+
+/* Navigation Links */
+[data-flux-nav-link] {
+    @apply font-sans text-text-muted transition-colors duration-200;
+}
+
+[data-flux-nav-link]:hover {
+    @apply text-primary;
+}
+
+/* Modals */
+[data-flux-modal] {
+    @apply rounded-[12px] shadow-[0px_2px_10px_0px_rgba(13,19,27,0.1),_0px_0px_2px_0px_rgba(13,19,27,0.2)];
+}
