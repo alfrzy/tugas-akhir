@@ -277,10 +277,10 @@
                         <div class="flex justify-between items-start mb-4">
                             <div class="flex items-center gap-2">
                                 <flux:icon name="sparkles" variant="solid" class="w-5 h-5 text-purple-600" />
-                                <h4 class="font-bold text-purple-900 dark:text-purple-300">Hasil Review AI (Semantic Scoring)</h4>
+                                <h4 class="font-bold text-purple-900 dark:text-purple-300">Penilaian Auto Grader</h4>
                             </div>
                             <flux:badge color="purple" size="sm" class="font-bold">
-                                Skor AI: {{ $answer->ai_score }} / 100
+                                Skor Auto Grader: {{ $answer->ai_score }} / 100
                             </flux:badge>
                         </div>
                         <p class="text-sm text-purple-800 dark:text-purple-400 italic mb-4">
@@ -292,7 +292,7 @@
                                 @csrf
                                 <input type="hidden" name="score" value="{{ $answer->ai_score }}">
                                 <flux:button type="submit" size="sm" variant="filled" color="purple" icon="check">
-                                    Gunakan Skor AI
+                                    Gunakan Skor ini
                                 </flux:button>
                             </form>
                         </div>

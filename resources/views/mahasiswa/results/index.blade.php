@@ -50,13 +50,13 @@
                 <flux:table.rows>
                     @forelse($submissions as $submission)
                         <flux:table.row class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                            <flux:table.cell class="pl-6">
+                            <flux:table.cell class="pl-6 whitespace-normal max-w-xs">
                                 <span class="block font-bold text-slate-800 dark:text-slate-200">{{ $submission->exam->subject->subject_name }}</span>
                                 <span class="text-xs text-slate-500">{{ $submission->exam->subject->subject_code }}</span>
                             </flux:table.cell>
                             
-                            <flux:table.cell>
-                                <span class="font-medium">{{ $submission->exam->title }}</span>
+                            <flux:table.cell class="whitespace-normal max-w-xs">
+                                <span class="block font-medium">{{ $submission->exam->title }}</span>
                             </flux:table.cell>
                             
                             <flux:table.cell class="text-slate-500 text-sm">
